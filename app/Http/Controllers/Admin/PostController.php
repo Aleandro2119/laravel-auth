@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -28,6 +29,7 @@ class PostController extends Controller
     public function create()
     {
         //
+        return view('admin.posts.create');
     }
 
     /**
@@ -39,6 +41,27 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate(
+            [
+                'title' => 'required|string|unique:posts|min:5|max:255',
+                'image' => 'required|string|unique:posts',
+                'description' => 'required|string',
+            ],
+            [
+                'required' => 'Il campo :attribute è obbligatorio!',
+                'title.unique' => "Il Post $request->title è già esistente!",
+                'image.unique' => "Questa immagine è già stata inserita!",
+                'title.min' => "$request->title è lungo meno di 5 caratteri!"
+            ]
+        );
+
+        $data = $request->all();
+
+        $data['slug'] = Str::slug($request->title, '-');
+
+        $post = Post::create($data);
+
+        return redirect()->route('admin.posts.index')->with('message', "$post->title creato con successo");
     }
 
     /**
