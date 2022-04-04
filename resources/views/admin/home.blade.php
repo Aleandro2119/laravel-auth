@@ -14,7 +14,9 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                    <div class="actions mt-3">
+                        <a class="btn btn-secondary" href="{{ route('admin.posts.index') }}">Guarda i Tuoi Post</a>
+                    </div>
                 </div>
             </div>
         </div>
